@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-	<packageId>pirateby.tradeoptimizer</packageId>
-	<name>TradeOptimizer</name>
+	<packageId>pirateby.vanillaoptimizations</packageId>
+	<name>VanillaOptimizations</name>
 	<author>PirateBY</author>
 	<supportedVersions>
 		<li>1.2</li>
@@ -19,9 +19,13 @@
 
 	<description>
 [ENG]
-The trading window with factions or ships now opens almost instantly
+Optimizations:
+- The trading window with factions or ships now opens almost instantly
+- Instant copy/paste of storage settings on big modpacks, as well as third-party mods like FilterManager
 
 [RUS]
-Окно торговли с фракциями или кораблями теперь открывается почти мгновенно
+Оптимизации:
+- Окно торговли с фракциями или кораблями теперь открывается почти мгновенно
+- Мгновенное копирование/установка настроек складов на больших модпаках, а также сторонними модами типа FilterManager
 </description>
 </ModMetaData>

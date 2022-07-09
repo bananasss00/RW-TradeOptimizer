@@ -2,19 +2,71 @@
 using Verse;
 using HarmonyLib;
 using RimWorld;
+using System;
+using System.Threading.Tasks;
 
-namespace TradeOptimizer;
+namespace VanillaOptimizations;
 
 [StaticConstructorOnStartup]
-[HarmonyPatch(typeof(TraderKindDef), nameof(TraderKindDef.WillTrade))]
 public static class Start
 {
     static Start()
     {
-        new Harmony("pirateby.tradeoptimizer").PatchAll();
-        Log.Message("[TradeOptimizer] loaded successfully!");
+        new Harmony("pirateby.vanillaoptimizations").PatchAll();
+        Log.Message("[VanillaOptimizations] loaded successfully!");
+    }
+}
+
+[HarmonyPatch(typeof(ThingFilter), nameof(ThingFilter.SetAllow), new [] {typeof(ThingDef), typeof(bool)})]
+static class Delayed_ThingFilter_SetAllow_Patch
+{
+    static object locker = new();
+    static List<ThingFilter> _delayedCallbacks = new();
+
+    [HarmonyPrefix]
+    static void SetAllowPrefix(ThingFilter __instance, ref Action __state)
+	{
+        if ((__state = __instance.settingsChangedCallback) != null) {
+            lock (locker)
+            {
+                if (!_delayedCallbacks.Contains(__instance))
+                {
+                    // set delayed callback
+                    _delayedCallbacks.Add(__instance);
+                    
+                    Action callback = __state;
+                    
+                    Task.Run(async () => {
+                        await Task.Delay(1000);
+                        
+                        callback();
+
+                        #if  DEBUG
+                        Log.Warning($"[VanillaOptimizations] Storage settingsChangedCallback called!");
+                        #endif
+
+                        lock (locker)
+                        {
+                            _delayedCallbacks.Remove(__instance);
+                        }
+                    });
+                }
+            }
+            __instance.settingsChangedCallback = null; // dont call callback from original
+        }
     }
 
+    [HarmonyPostfix]
+    static void SetAllowPostfix(ThingFilter __instance, Action __state)
+    {
+        if (__state != null) { // disable callback
+            __instance.settingsChangedCallback = __state;
+        }
+    }
+}
+
+[HarmonyPatch(typeof(TraderKindDef), nameof(TraderKindDef.WillTrade))]
+static class TradeOptimization_Patch {
     static Dictionary<TraderKindDef, Dictionary<ThingDef, bool>> _willTrade = new();
 
     [HarmonyPrefix]
@@ -54,4 +106,3 @@ public static class Start
         }
     }
 }
-

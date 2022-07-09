@@ -4,7 +4,7 @@
 		<TargetFramework>net472</TargetFramework>
 		<PlatformTarget>x64</PlatformTarget>
 		
-		<AssemblyName>TradeOptimizer</AssemblyName>
+		<AssemblyName>VanillaOptimizations</AssemblyName>
 		<OutputPath>../Assemblies</OutputPath>
 		
 		<Authors>PirateBY</Authors>
@@ -40,11 +40,14 @@
  	  <PackageReference Include="Lib.Harmony" Version="2.2.1">
  	    <ExcludeAssets>runtime</ExcludeAssets>
  	  </PackageReference>
+	  <PackageReference Include="Krafs.Publicizer" Version="1.0.2">
+ 	    <PrivateAssets>all</PrivateAssets>
+ 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+ 	  </PackageReference>
  	</ItemGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="rd &quot;$(ProjectDir)\obj&quot; &quot;$(ProjectDir)\bin&quot; /S /Q" />
-	</Target>
-
+	<ItemGroup>
+		<Publicize Include="Assembly-CSharp" />
+	</ItemGroup>
 
 </Project>
